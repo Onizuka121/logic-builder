@@ -1,13 +1,41 @@
+import re
+from operator import xor
 import sympy 
+from sympy.core import Symbol, symbol, sympify
 from sympy.logic.boolalg import truth_table
 from texttable import Texttable
+from sympy.parsing.sympy_parser import parse_expr
 
 
-#1.accept xor operator  (replace all operator if there are xor operators "^", but first add gaps between variables and operators)
+
+#1.accept xor operator
 #2.thruth table to formula 
 
 
 exp_str = input("expression : ");
+
+def get_variables(exp_str): 
+    vars = {}
+    for c in exp_str:
+        if c not in "^~|&":
+            vars[c] = Symbol(c)
+    
+    return vars
+
+def parse_logical_expr(expr_str, variables):
+    replacements = {
+        r'\bnot\b|~': 'Not',
+        r'\band\b|&': 'And',
+        r'\bor\b|\|': 'Or',
+        r'\bxor\b|\^': 'Xor'
+    }
+
+    for pattern, repl in replacements.items():
+        expr_str = re.sub(pattern, repl, expr_str)
+
+    return parse_expr(expr_str, evaluate=False, local_dict=variables)
+
+exp_str = parse_logical_expr(exp_str,get_variables(exp_str))
 
 
 try:
