@@ -3,7 +3,7 @@ from sympy.logic.boolalg import truth_table
 from texttable import Texttable
 
 
-#1.accept xor operator (replace all operator if there are xor operators "^", but first add gaps between variables and operators)
+#1.accept xor operator  (replace all operator if there are xor operators "^", but first add gaps between variables and operators)
 #2.thruth table to formula 
 
 
