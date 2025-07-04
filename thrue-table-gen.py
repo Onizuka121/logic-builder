@@ -1,59 +1,109 @@
-import re
-from operator import xor
 import sympy 
-from sympy.core import Symbol, symbol, sympify
 from sympy.logic.boolalg import truth_table
 from texttable import Texttable
-from sympy.parsing.sympy_parser import parse_expr
-
-
-
-#1.accept xor operator
-#2.thruth table to formula 
+from collections import deque
 
 
 exp_str = input("expression : ");
 
-def get_variables(exp_str): 
-    vars = {}
-    for c in exp_str:
-        if c not in "^~|&":
-            vars[c] = Symbol(c)
+
+def get_gray_code(n):
+    code = [[0],[1]]
     
-    return vars
+    for _ in range(n-1):
+        tmp = code[::-1]
+        for c in tmp:
+            code.append(c)
+        j = 0
+        while j < len(code):
+            d = deque(code[j])
+            if j < len(code)/2:
+                d.appendleft(0)
+            else: 
+                d.appendleft(1)
+            
+            code[j] = list(d)
+            j += 1
+    print(code) 
+    return code
+    
 
-def parse_logical_expr(expr_str, variables):
-    replacements = {
-        r'\bnot\b|~': 'Not',
-        r'\band\b|&': 'And',
-        r'\bor\b|\|': 'Or',
-        r'\bxor\b|\^': 'Xor'
-    }
+def get_modified_tb(table):
+    nt = []
+    for i in range(len(table)):
+        t = 0
+        c = len(table[i][0])-1
+        for bit in table[i][0]:
+            t += bit*(2**c)
+            c-=1
 
-    for pattern, repl in replacements.items():
-        expr_str = re.sub(pattern, repl, expr_str)
+        nt.append((t,table[i][1]))
 
-    return parse_expr(expr_str, evaluate=False, local_dict=variables)
-
-#exp_str = parse_logical_expr(exp_str,get_variables(exp_str))
-
-
-try:
-    f = sympy.sympify(exp_str)
-except:
-    print("[>] invalid formula")
-    exit() 
-
-vars = sorted(list(f.atoms()),key= lambda x: x.name)
-table = list(truth_table(f, vars))
-
-t = Texttable()
-
-vars.append("F")
-t.add_row(vars)
-
-for inputs, output in table:
-    t.add_row(list(inputs) + [1 if output else 0])
+    return nt
 
 
-print(t.draw())
+
+def get_k_map(vars,table):
+    c = int(len(vars)/2)
+    a = get_gray_code(c)
+    b = get_gray_code(len(vars)-c)
+    print(table)
+    print(get_modified_tb(table))
+
+    map = []
+    for ia in range(len(a)):
+        map.append([])
+        for ib in range(len(b)):
+            print(a[ia])
+    
+            #convert a[ia]+b[ib] to integer so its easy to map to table  
+
+
+
+def get_tb_from_fromula(formula):
+    try:
+        f = sympy.sympify(formula)
+    except:
+        print("[>] invalid formula")
+        exit() 
+    vars = sorted(list(f.atoms()),key= lambda x: x.name)
+    table = list(truth_table(f, vars))
+
+    t = Texttable()
+
+    get_k_map(vars,table)
+
+    vars.append("F")
+
+    t.add_row(vars)
+
+    for inputs, output in table:
+        t.add_row(list(inputs) + [1 if output else 0])
+
+    return t.draw()
+
+
+get_tb_from_fromula(exp_str)
+
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
