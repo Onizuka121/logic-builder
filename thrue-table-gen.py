@@ -35,7 +35,7 @@ def parse_logical_expr(expr_str, variables):
 
     return parse_expr(expr_str, evaluate=False, local_dict=variables)
 
-exp_str = parse_logical_expr(exp_str,get_variables(exp_str))
+#exp_str = parse_logical_expr(exp_str,get_variables(exp_str))
 
 
 try:
@@ -44,7 +44,7 @@ except:
     print("[>] invalid formula")
     exit() 
 
-vars = list(f.atoms())
+vars = sorted(list(f.atoms()),key= lambda x: x.name)
 table = list(truth_table(f, vars))
 
 t = Texttable()
