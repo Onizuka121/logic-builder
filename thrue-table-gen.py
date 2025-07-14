@@ -113,7 +113,8 @@ def get_tb_from_fromula(formula):
     return t.draw()
 
 
-get_tb_from_fromula(exp_str)
+
+print(get_tb_from_fromula(exp_str))
 
 
     
